@@ -13,6 +13,16 @@ AudioInput in;
 float sc = 1.5;
 int start = 0;
 
+void init(){
+
+  frame.removeNotify();
+  frame.setUndecorated(true);
+  frame.addNotify();
+
+  super.init();
+
+}
+
 void setup()
 {
   size(1280,720,P2D);
@@ -38,6 +48,10 @@ void setup()
 
 void draw()
 {
+
+  if(frameCount>5)
+    frame.setLocation(0,0);
+  
   float trsh = 0.12;
   noStroke();
 
