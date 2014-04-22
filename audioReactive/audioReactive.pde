@@ -11,6 +11,9 @@ OscP5 oscP5;
 import ddf.minim.*;
 import net.osc.*;
 
+float data[];
+float NUMBER_OF_VALUES = 9;
+
 //PGraphicsOpenGL pgl; //need to use this to stop screen tearing
 //GL gl;
 
@@ -45,6 +48,8 @@ void setup()
   
   frameRate(60);
 
+  data = new float[NUMBER_OF_VALUES];
+
 /*
    pgl = (PGraphicsOpenGL) g; //processing graphics object
    gl = pgl.beginGL(); //begin opengl
@@ -62,6 +67,14 @@ void setup()
 }
 
 /////////////////////////////////////////
+
+
+void oscEvent(OscMessage theOscMessage) {
+  if(theOscMessage.checkAddrPattern("/control")==true) {
+    for(int i = 0 ; i < data.length;i++)
+      data[i] = (float)theOscMessage.get(i).floatValue();
+  }
+}
 
 void draw()
 {
