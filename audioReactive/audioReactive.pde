@@ -2,7 +2,14 @@
 
 //import processing.opengl.*;
 //import javax.media.opengl.GL;
+import oscP5.*;
+import netP5.*;
+
+OscP5 oscP5;
+
+
 import ddf.minim.*;
+import net.osc.*;
 
 //PGraphicsOpenGL pgl; //need to use this to stop screen tearing
 //GL gl;
@@ -10,8 +17,14 @@ import ddf.minim.*;
 Minim minim;
 AudioInput in;
 
+int port = 8888;
+
+
+/////////////////////////////////////////
 float sc = 1.5;
 int start = 0;
+float trsh = 0.12;
+/////////////////////////////////////////
 
 void init(){
 
@@ -22,11 +35,14 @@ void init(){
   super.init();
 
 }
+/////////////////////////////////////////
 
 void setup()
 {
   size(1280,720,P2D);
 
+  oscP5 = new OscP5(this,port);
+  
   frameRate(60);
 
 /*
@@ -45,6 +61,7 @@ void setup()
   noSmooth();
 }
 
+/////////////////////////////////////////
 
 void draw()
 {
@@ -52,10 +69,11 @@ void draw()
   if(frameCount>5)
     frame.setLocation(0,0);
   
-  float trsh = 0.12;
   noStroke();
 
   //start = 0;
+
+  // detekce
 
 /*
   for(int i = 0; i < 200 ; i++)
@@ -85,9 +103,11 @@ void draw()
 }
 
 
+/////////////////////////////////////////
 void stop()
 {
   in.close();
   minim.stop();
   super.stop();
 }
+/////////////////////////////////////////
