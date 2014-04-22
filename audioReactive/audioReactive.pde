@@ -79,7 +79,7 @@ void oscEvent(OscMessage theOscMessage) {
 void draw()
 {
 
-  if(frameCount>5)
+  if(frameCount < 5)
     frame.setLocation(0,0);
   
   noStroke();
