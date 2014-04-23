@@ -3,7 +3,6 @@
 import oscP5.*;
 import netP5.*;
 
-
 OscP5 oscP5;
 
 import ddf.minim.*;
@@ -14,8 +13,10 @@ float SCALE = 1000.0;
 float SPEED = 200.0;
 float SLOPE = 3.0;
 
+float smoothing = 150.0;
+
 float data[];
-int NUMBER_OF_VALUES = 9;
+int NUMBER_OF_VALUES = 24;
 
 //PGraphicsOpenGL pgl; //need to use this to stop screen tearing
 //GL gl;
@@ -26,7 +27,6 @@ AudioInput in;
 FFT fft;
 
 int port = 8888;
-
 
 /////////////////////////////////////////
 
@@ -55,10 +55,9 @@ void init(){
 void setup()
 {
 
-  size(1280,720,P2D);
+  size(1600,900,P2D);
   oscP5 = new OscP5(this,port);
   frameRate(60);
-
 
   /*
      pgl = (PGraphicsOpenGL) g; //processing graphics object
@@ -126,6 +125,8 @@ void draw() {
     //noise(frameCount/10000.0+x/1000.0+val)*sin( x / cycle + frameCount / speed ) * amp;
 
     for (float y = (int)(-AMP) ;y<height+AMP;y+=h*2) {
+    
+      h = noise(frameCount/100.0+x/100.0,frameCount/101.0+y/100.0)*(data[1]+0.01)*10.0;
 
       fill(inverse?255:0);
       rect(x, (y+sum+height*10)%height-h, w, h);
@@ -139,15 +140,13 @@ void draw() {
 
   fft.forward(in.mix);
 
-  float smoothing = 150.0;
 
     for(int i = 0; i<fft.avgSize(); i++){
      // int w = int(width/fft.avgSize());    
-      data[i] += (fft.getAvg(i)-data[i])/smoothing;
+      data[i] += (fft.getAvg(i)-pow(data[i],1.4))/smoothing;
     //  rect(i*w,0,w,fft.getAvg(i)*10.0);
     }
 }
-
 
 /////////////////////////////////////////
 
