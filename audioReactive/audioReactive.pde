@@ -9,6 +9,8 @@ OscP5 oscP5;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 
+float AMP = 3.0;
+
 float data[];
 int NUMBER_OF_VALUES = 9;
 
@@ -34,7 +36,7 @@ float amp= 800.0;
 
 boolean inverse = false;
 
-boolean showFFT = true;
+boolean showFFT = false;
 
 /////////////////////////////////////////
 
@@ -53,7 +55,6 @@ void setup()
   size(1280,720,P2D);
   oscP5 = new OscP5(this,port);
   frameRate(60);
-  data = new float[NUMBER_OF_VALUES];
 
 
   /*
@@ -70,8 +71,9 @@ void setup()
   in.disableMonitoring();  
 
   fft = new FFT(in.bufferSize(), in.sampleRate());
-  fft.linAverages(20); 
-  fft.logAverages(22,10);
+  fft.logAverages(60,3);
+
+  data = new float[fft.avgSize()];
 
   noSmooth();
 }
@@ -91,24 +93,36 @@ void draw() {
 
   background(inverse?0:255);
 
-  fft.forward(in.mix);
 
   noStroke();
 
   val += (noise(frameCount/30.0)-val)/((noise(millis()/100.0))*40.0);
 
-
-  
-
-
   int cnt = 0;
+
+  float shift[] = new float[data.length];
 
   for (float x = 0 ;x<width ;x+=w) {
 
     float one = noise(frameCount/10.0);
+    
+    float sum = 1.0;
+
+    for(int i = 0 ; i < data.length;i++){
+      shift[i] = sin(frameCount/speed+x/(1000.0/(i/2.0+1.0)))*data[i]*((i+1.0)/5.0)*AMP;
+      sum += shift[i];
+    }
 
 
-    float shift = noise(frameCount/10000.0+x/1000.0+val)*sin( x / cycle + frameCount / speed ) * amp;
+   
+   /* 
+    for(int i = 0 ; i < data.length;i++){
+      shift += sin(((float)x)/(data[i]*100.0)+frameCount/1000.0)*data[i]*10.0;
+    }
+*/
+
+    
+    //noise(frameCount/10000.0+x/1000.0+val)*sin( x / cycle + frameCount / speed ) * amp;
 
     for (float y = (int)(-amp) ;y<height + amp;y+=h*2) {
 
@@ -116,15 +130,24 @@ void draw() {
 
 
       fill(inverse?255:0);
-      rect(x, y+shift, w, h);
+      rect(x, (y+sum+height*5)%height-h, w, h);
     }
 
     stroke(0);
     line(x, 0, x, height);
   }
 
-  stroke(255,0,0);
+  fill(255);
 
+  fft.forward(in.mix);
+
+  float smoothing = 20.0;
+
+    for(int i = 0; i<fft.avgSize(); i++){
+     // int w = int(width/fft.avgSize());    
+      data[i] += (fft.getAvg(i)-data[i])/smoothing;
+    //  rect(i*w,0,w,fft.getAvg(i)*10.0);
+    }
 }
 
 
