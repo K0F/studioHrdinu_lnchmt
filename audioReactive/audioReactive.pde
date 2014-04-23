@@ -55,7 +55,7 @@ void init(){
 void setup()
 {
 
-  size(1600,900,P2D);
+  size(1600,1200,P2D);
   oscP5 = new OscP5(this,port);
   frameRate(60);
 
@@ -104,6 +104,7 @@ void draw() {
 
   float shift[] = new float[data.length];
 
+
   for (float x = 0 ;x<width ;x+=w) {
 
     float sum = 1.0;
@@ -126,7 +127,7 @@ void draw() {
 
     for (float y = (int)(-AMP) ;y<height+AMP;y+=h*2) {
     
-      h = noise(frameCount/100.0+x/100.0,frameCount/101.0+y/100.0)*(data[1]+0.01)*10.0;
+      //h = noise(frameCount/100.0+x/1000.0,frameCount/101.0)*(data[(frameCount/5)%data.length]*0.15)+10.0;
 
       fill(inverse?255:0);
       rect(x, (y+sum+height*10)%height-h, w, h);
