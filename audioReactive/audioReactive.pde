@@ -10,6 +10,9 @@ import ddf.minim.*;
 import ddf.minim.analysis.*;
 
 float AMP = 3.0;
+float SCALE = 1000.0;
+float SPEED = 200.0;
+float SLOPE = 3.0;
 
 float data[];
 int NUMBER_OF_VALUES = 9;
@@ -30,9 +33,9 @@ int port = 8888;
 float w = 12;
 float h = 10;
 
-float speed = 241.3;
-float cycle = 50.0;
-float amp= 800.0;
+//float speed = 241.3;
+//float cycle = 50.0;
+//float amp= 800.0;
 
 boolean inverse = false;
 
@@ -104,12 +107,10 @@ void draw() {
 
   for (float x = 0 ;x<width ;x+=w) {
 
-    float one = noise(frameCount/10.0);
-    
     float sum = 1.0;
 
     for(int i = 0 ; i < data.length;i++){
-      shift[i] = sin(frameCount/speed+x/(1000.0/(i/2.0+1.0)))*data[i]*((i+1.0)/5.0)*AMP;
+      shift[i] = sin(frameCount/SPEED+x/(SCALE/(i/2.0+1.0)))*data[i]*((i+1.0)/SLOPE)*AMP;
       sum += shift[i];
     }
 
@@ -124,13 +125,10 @@ void draw() {
     
     //noise(frameCount/10000.0+x/1000.0+val)*sin( x / cycle + frameCount / speed ) * amp;
 
-    for (float y = (int)(-amp) ;y<height + amp;y+=h*2) {
-
-
-
+    for (float y = (int)(-AMP) ;y<height+AMP;y+=h*2) {
 
       fill(inverse?255:0);
-      rect(x, (y+sum+height*5)%height-h, w, h);
+      rect(x, (y+sum+height*10)%height-h, w, h);
     }
 
     stroke(0);
@@ -141,7 +139,7 @@ void draw() {
 
   fft.forward(in.mix);
 
-  float smoothing = 20.0;
+  float smoothing = 150.0;
 
     for(int i = 0; i<fft.avgSize(); i++){
      // int w = int(width/fft.avgSize());    
