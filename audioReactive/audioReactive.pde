@@ -18,11 +18,19 @@ AudioInput in;
 
 int port = 8888;
 
+
 /////////////////////////////////////////
 
-float sc = 1.5;
-int start = 0;
-float trsh = 0.12;
+float w = 12;
+float h = 10;
+
+float speed = 241.3;
+float cycle = 50.0;
+float amp= 800.0;
+
+boolean inverse = false;
+
+
 
 /////////////////////////////////////////
 
@@ -37,10 +45,13 @@ void init(){
 
 void setup()
 {
+
   size(1280,720,P2D);
   oscP5 = new OscP5(this,port);
   frameRate(60);
   data = new float[NUMBER_OF_VALUES];
+
+
 
   /*
      pgl = (PGraphicsOpenGL) g; //processing graphics object
@@ -67,43 +78,39 @@ void oscEvent(OscMessage theOscMessage) {
   }
 }
 
-void draw()
-{
+float val = 0.0;
 
-  if(frameCount < 5)
-    frame.setLocation(0,0);
+void draw() {
+
+  background(inverse?0:255);
 
   noStroke();
 
-  //start = 0;
+  val += (noise(frameCount/30.0)-val)/((noise(millis()/100.0))*40.0);
 
-  // detekce
+  int cnt = 0;
 
-  /*
-     for(int i = 0; i < 200 ; i++)
-     {
+  for (float x = 0 ;x<width ;x+=w) {
+    
+    float one = noise(frameCount/10.0);
+    
+
+    float shift = noise(frameCount/10000.0+x/1000.0+val)*sin( x / cycle + frameCount / speed ) * amp;
+
+    for (float y = (int)(-amp) ;y<height + amp;y+=h*2) {
 
 
-     if(in.right.get(i)<0.01) {
-     if(in.right.get(i+1)<0.01) {
 
-     for(int q = 2;q<100;q++) {
-     if(abs(in.right.get(i+q)-0)>trsh) {
-     start = i;
-     break;
-     }
-     }
-     break;
-     }
-     }
-     }
-   */
 
-  for(int i = 0; i < height; i++){
-    stroke(in.left.get(i)*255);
-    line(0,i,width,i);
+      fill(inverse?255:0);
+      rect(x, y+shift, w, h);
+    }
+
+    stroke(0);
+    line(x, 0, x, height);
   }
 }
+
 
 /////////////////////////////////////////
 
