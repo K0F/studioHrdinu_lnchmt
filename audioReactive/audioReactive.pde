@@ -3,9 +3,11 @@
 import oscP5.*;
 import netP5.*;
 
+
 OscP5 oscP5;
 
 import ddf.minim.*;
+import ddf.minim.analysis.*;
 
 float data[];
 int NUMBER_OF_VALUES = 9;
@@ -15,6 +17,8 @@ int NUMBER_OF_VALUES = 9;
 
 Minim minim;
 AudioInput in;
+
+FFT fft;
 
 int port = 8888;
 
@@ -30,7 +34,7 @@ float amp= 800.0;
 
 boolean inverse = false;
 
-
+boolean showFFT = false;
 
 /////////////////////////////////////////
 
@@ -52,7 +56,6 @@ void setup()
   data = new float[NUMBER_OF_VALUES];
 
 
-
   /*
      pgl = (PGraphicsOpenGL) g; //processing graphics object
      gl = pgl.beginGL(); //begin opengl
@@ -65,6 +68,9 @@ void setup()
 
   in = minim.getLineIn();
   in.disableMonitoring();  
+
+  fft = new FFT(in.bufferSize(), in.sampleRate());
+  fft.logAverages(22,10);
 
   noSmooth();
 }
@@ -84,16 +90,21 @@ void draw() {
 
   background(inverse?0:255);
 
+  fft.forward(in.mix);
+
   noStroke();
 
   val += (noise(frameCount/30.0)-val)/((noise(millis()/100.0))*40.0);
 
+
+
+
   int cnt = 0;
 
   for (float x = 0 ;x<width ;x+=w) {
-    
+
     float one = noise(frameCount/10.0);
-    
+
 
     float shift = noise(frameCount/10000.0+x/1000.0+val)*sin( x / cycle + frameCount / speed ) * amp;
 
@@ -109,7 +120,16 @@ void draw() {
     stroke(0);
     line(x, 0, x, height);
   }
-}
+    
+    stroke(255,0,0);
+
+if(showFFT)
+   for(int i = 0; i < fft.specSize(); i++)
+       {
+          // draw the line for frequency band i, scaling it up a bit so we can see it
+           line( i, height, i, height - fft.getBand(i)*8 );
+       }
+    }
 
 
 /////////////////////////////////////////
