@@ -34,7 +34,7 @@ float amp= 800.0;
 
 boolean inverse = false;
 
-boolean showFFT = false;
+boolean showFFT = true;
 
 /////////////////////////////////////////
 
@@ -70,6 +70,7 @@ void setup()
   in.disableMonitoring();  
 
   fft = new FFT(in.bufferSize(), in.sampleRate());
+  fft.linAverages(20); 
   fft.logAverages(22,10);
 
   noSmooth();
@@ -97,6 +98,7 @@ void draw() {
   val += (noise(frameCount/30.0)-val)/((noise(millis()/100.0))*40.0);
 
 
+  
 
 
   int cnt = 0;
@@ -120,16 +122,10 @@ void draw() {
     stroke(0);
     line(x, 0, x, height);
   }
-    
-    stroke(255,0,0);
 
-if(showFFT)
-   for(int i = 0; i < fft.specSize(); i++)
-       {
-          // draw the line for frequency band i, scaling it up a bit so we can see it
-           line( i, height, i, height - fft.getBand(i)*8 );
-       }
-    }
+  stroke(255,0,0);
+
+}
 
 
 /////////////////////////////////////////
