@@ -1,5 +1,3 @@
-
-
 //import processing.opengl.*;
 //import javax.media.opengl.GL;
 import oscP5.*;
@@ -7,12 +5,10 @@ import netP5.*;
 
 OscP5 oscP5;
 
-
 import ddf.minim.*;
-import net.osc.*;
 
 float data[];
-float NUMBER_OF_VALUES = 9;
+int NUMBER_OF_VALUES = 9;
 
 //PGraphicsOpenGL pgl; //need to use this to stop screen tearing
 //GL gl;
@@ -22,22 +18,21 @@ AudioInput in;
 
 int port = 8888;
 
-
 /////////////////////////////////////////
+
 float sc = 1.5;
 int start = 0;
 float trsh = 0.12;
+
 /////////////////////////////////////////
 
 void init(){
-
   frame.removeNotify();
   frame.setUndecorated(true);
   frame.addNotify();
-
   super.init();
-
 }
+
 /////////////////////////////////////////
 
 void setup()
@@ -67,7 +62,6 @@ void setup()
 }
 
 /////////////////////////////////////////
-
 
 void oscEvent(OscMessage theOscMessage) {
   if(theOscMessage.checkAddrPattern("/control")==true) {
@@ -108,19 +102,19 @@ void draw()
   }
 */
   
-  for(int i = 0; i < height; i++)
-  {
+  for(int i = 0; i < height; i++){
     stroke(in.left.get(i)*255);
     line(0,i,width,i);
   }
 }
 
-
 /////////////////////////////////////////
+
 void stop()
 {
   in.close();
   minim.stop();
   super.stop();
 }
+
 /////////////////////////////////////////
